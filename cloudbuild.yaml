@@ -1,0 +1,52 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        docker pull asia.gcr.io/mpwei-2889f/sangokushi-bot:latest || exit 0
+  # build the container
+  - name: 'gcr.io/cloud-builders/docker'
+    timeout: 1200s
+    args:
+      [
+        'build',
+        '-f',
+        'Dockerfile',
+        '-t',
+        'asia.gcr.io/mpwei-2889f/sangokushi-bot',
+        '--cache-from',
+        'asia.gcr.io/mpwei-2889f/sangokushi-bot:latest',
+        '.',
+      ]
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=asia-east1'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=sangokushi-bot-cluster'
+  # Push container
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'push',
+      'asia.gcr.io/mpwei-2889f/sangokushi-bot:latest'
+    ]
+    id: Push
+  # Deploy container image to Cloud Run
+#  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+#    args: [
+#      'run',
+#      'deploy',
+#      'sangokushi-bot',
+#      '--project',
+#      'mpwei-2889f',
+#      '--image',
+#      'asia.gcr.io/mpwei-2889f/sangokushi-bot:latest',
+#      '--port', '3000',
+#      '--region', 'asia-east1',
+#      '--platform', 'managed',
+#      '--allow-unauthenticated',
+#      '--quiet'
+#    ]
+#    id: Deploy
+#    entrypoint: gcloud
+timeout: 1200s
+images:
+  - asia.gcr.io/mpwei-2889f/sangokushi-bot
