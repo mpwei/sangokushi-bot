@@ -4,7 +4,7 @@ const LineBot = require('../controller/LineBot')
 const ChannelMiddleware = require('../middleware/channel')
 
 router.post('/line/bot/:botName', LineBot.ReplyMessages)
-
 router.post('/line/bot2/:botName', ChannelMiddleware, LineBot.ReplyMessages2)
+router.post('/line/push', LineBot.SendMessage)
 
 module.exports = router

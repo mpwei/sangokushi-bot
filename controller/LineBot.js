@@ -1,4 +1,5 @@
 const LineBot = require('@line/bot-sdk')
+const admin = require('firebase-admin')
 const Bot = new LineBot.Client({
     channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN,
 })
@@ -69,6 +70,20 @@ module.exports = {
     },
     ReplyMessages2: (req, res, next) => {
         return res.send(req.body)
+    },
+    SendMessage: (req, res, next) => {
+        return Bot.pushMessage(req.body.targetId, req.body.message).then(() => {
+            return res.send('OK')
+        }).catch((error) => {
+            return next({
+                Code: 'BOT-C-002',
+                Status: 501,
+                Message: error
+            })
+        })
+    },
+    BulkSendMessage: (req, res, next) => {
+        return res.send('OK')
     }
 }
 
