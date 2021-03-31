@@ -1,4 +1,5 @@
 const admin = require('firebase-admin')
+const axios = require('axios')
 
 const CheckChannelPermission = (id, event) => {
 	return admin.database().ref(event.source.type + '/' + id).once('value').then((snapshot) => {
@@ -41,6 +42,7 @@ module.exports = (req, res, next) => {
 	})
 
 	return Promise.all(ResolvePermission).then((result) => {
+		console.log(result)
 		req.body.events = result.filter(data => data.status === true)
 		return next()
 	})
