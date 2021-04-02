@@ -30,23 +30,23 @@ steps:
     ]
     id: Push
   # Deploy container image to Cloud Run
-#  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-#    args: [
-#      'run',
-#      'deploy',
-#      'sangokushi-bot',
-#      '--project',
-#      'mpwei-2889f',
-#      '--image',
-#      'asia.gcr.io/mpwei-2889f/sangokushi-bot:latest',
-#      '--port', '3000',
-#      '--region', 'asia-east1',
-#      '--platform', 'managed',
-#      '--allow-unauthenticated',
-#      '--quiet'
-#    ]
-#    id: Deploy
-#    entrypoint: gcloud
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    args: [
+      'run',
+      'deploy',
+      'sangokushi-bot',
+      '--project',
+      'mpwei-2889f',
+      '--image',
+      'asia.gcr.io/mpwei-2889f/sangokushi-bot:latest',
+      '--port', '3000',
+      '--region', 'asia-east1',
+      '--platform', 'managed',
+      '--allow-unauthenticated',
+      '--quiet'
+    ]
+    id: Deploy
+    entrypoint: gcloud
 timeout: 1200s
 images:
   - asia.gcr.io/mpwei-2889f/sangokushi-bot
