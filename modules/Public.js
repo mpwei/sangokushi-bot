@@ -7,5 +7,6 @@ module.exports = {
 			.replace('$', '')
 			.replace('[', '')
 			.replace(']', '')
+			.replace('\n', '')
 	}
 }

@@ -16,56 +16,77 @@ module.exports = {
 				case 'message':
 					if (event.message.type === 'text') {
 						event.message.text = FilterCharacter(event.message.text)
-						const Command = admin.database().ref(`replyMessage/${event.type}/command/${event.message.text}`).once('value').then((snapshot) => {
-							if (snapshot.exists()) {
-								const Data = snapshot.val()
-								if (Data.type === 'function') {
-									return LineModules.GetProfile(event).then((message) => {
-										return Bot.replyMessage(event.replyToken, message).then(() => true).catch((error) => {
+
+						const CombineCommand = await admin.database().ref(`replyMessage/${event.type}/combinedCommand`).once('value').then((snapshot) => {
+							return snapshot.val()
+						})
+
+						const FilterCombineCommand = Object.keys(CombineCommand).filter((command) => {
+							return event.message.text.indexOf(command) !== -1
+						})
+
+						let Command
+						if (FilterCombineCommand.length > 0) {
+							event.message.text = event.message.text.replace(FilterCombineCommand[0], '')
+							console.log(event.message.text)
+							console.log(FilterCombineCommand[0])
+							Command = LineModules[CombineCommand[FilterCombineCommand[0]]](event).then((message) => {
+								return Bot.replyMessage(event.replyToken, message).then(() => true).catch((error) => {
+									throw error
+								}).catch((error) => {
+									throw error
+								})
+							})
+						} else {
+							Command = admin.database().ref(`replyMessage/${event.type}/command/${event.message.text}`).once('value').then((snapshot) => {
+								if (snapshot.exists()) {
+									const Data = snapshot.val()
+									if (Data.type === 'function') {
+										return LineModules[Data.action](event).then((message) => {
+											return Bot.replyMessage(event.replyToken, message).then(() => true).catch((error) => {
+												throw error
+											})
+										}).catch((error) => {
 											throw error
 										})
-									}).catch((error) => {
-										throw error
-									})
-								} else {
-									return Bot.replyMessage(event.replyToken, Data).then(() => true).catch((error) => {
-										throw error
-									})
+									} else {
+										return Bot.replyMessage(event.replyToken, Data).then(() => true).catch((error) => {
+											throw error
+										})
+									}
 								}
-							}
-						})
+							})
+						}
 						ReplyPromise.push(Command)
 					}
 					break
 				case 'join':
 				case 'follow':
 				case 'memberJoined':
-					const Command = admin.database().ref(`replyMessage/join/command/message`).once('value').then((snapshot) => {
+					const Command = admin.database().ref(`replyMessage/join/message`).once('value').then((snapshot) => {
 						if (snapshot.exists()) {
-							const ReplyMessagePromise = []
-							ReplyMessagePromise.push(Bot.replyMessage(event.replyToken, snapshot.val()))
-							return Promise.all(ReplyMessagePromise).then(() => true).catch((error) => {
+							return Bot.replyMessage(event.replyToken, snapshot.val()).then(() => true).catch((error) => {
 								throw error
 							})
 						}
 					})
-					const CreateUser = LineModules.GetProfile(event).then((profile) => {
-						return LineModules.CreateMember(profile)
-					}).catch((error) => {
-						throw error
+					ReplyPromise.push(Command)
+					event.joined.members.forEach((userData) => {
+						event.source.userId = userData.userId
+						ReplyPromise.push(LineModules.GetProfile(event).then((profile) => {
+							return LineModules.CreateMember(profile, event)
+						}).catch((error) => {
+							throw error
+						}))
 					})
-					ReplyPromise.push(Command, CreateUser)
 					break
 				case 'leave':
 				case 'memberLeft':
 				case 'unfollow':
-					// const Profile = await Bot.getProfile(event.left.members[0].userId).then((profile) => {
-					//     return profile
-					// })
-					// ReplyPromise.push(Bot.pushMessage(event.source.groupId, {
-					//     type: 'text',
-					//     text: "感謝兄弟為古武付出的一切努力，希望我們有緣能再見！"
-					// }))
+					ReplyPromise.push(Bot.pushMessage(event.source.groupId, {
+					    type: 'text',
+					    text: "感謝兄弟為古武付出的一切努力，希望我們有緣能再見！"
+					}))
 					break
 			}
 		})
