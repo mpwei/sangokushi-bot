@@ -1,4 +1,5 @@
 const admin = require('firebase-admin')
+const axios = require('axios')
 
 const CheckChannelPermission = (id, event) => {
 	return admin.database().ref(event.source.type + '/' + id).once('value').then((snapshot) => {
@@ -23,17 +24,15 @@ module.exports = (req, res, next) => {
 	const Events = req.body.events
 	const ResolvePermission = Events.map(async (event) => {
 		let ID
-		const MessageSource = event.source
-
-		switch (MessageSource.type) {
+		switch (event.source.type) {
 			case 'user':
-				ID = MessageSource.userId
+				ID = event.source.userId
 				break
 			case 'group':
-				ID = MessageSource.groupId
+				ID = event.source.groupId
 				break
 			case 'room':
-				ID = MessageSource.roomId
+				ID = event.source.roomId
 				break
 		}
 
@@ -42,6 +41,23 @@ module.exports = (req, res, next) => {
 
 	return Promise.all(ResolvePermission).then((result) => {
 		req.body.events = result.filter(data => data.status === true)
-		return next()
+		const Reject = result.filter(data => data.status === false && data.type === 'message' && data.message.text.replace('！', '!').indexOf('!') !== -1).map((event) => {
+			return axios.post(process.env.BASE_URL + '/webhook/line/reply', {
+				replyToken: event.replyToken,
+				message: {
+					type: 'text',
+					text: '主公您好，您目前沒有軍令可以使用神兵，請輸入啟動碼得以招喚神兵，或與工程團隊聯繫。\n\nLineID: mailerbx\nEmail: mailermpwei@gmail.com\nIssue Report: https://github.com/mpwei/sangokushi-bot/issues'
+				}
+			})
+		})
+		return Promise.all(Reject).then(() => {
+			return next()
+		}).catch((error) => {
+			return next({
+				Code: 'BOT-M-001',
+				Status: 501,
+				Message: error
+			})
+		})
 	})
 }
