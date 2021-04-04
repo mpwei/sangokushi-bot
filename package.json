@@ -4,6 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "cross-env PORT=3000 nodemon ./bin/www",
+    "dev:spa": "vite",
+    "build": "vite build",
+    "serve": "vite preview",
     "start": "node ./bin/www"
   },
   "dependencies": {
@@ -19,7 +22,11 @@
     "morgan": "~1.9.1"
   },
   "devDependencies": {
+    "@vitejs/plugin-vue": "^1.2.1",
+    "@vue/compiler-sfc": "^3.0.5",
     "cross-env": "^7.0.2",
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.4",
+    "vite": "^2.1.5",
+    "vue": "^3.0.5"
   }
 }
