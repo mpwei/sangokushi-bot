@@ -20,6 +20,15 @@ if (!admin.apps.length) {
     })
 }
 
+const { createProxyMiddleware } = require('http-proxy-middleware')
+app.use('/pump', createProxyMiddleware({
+    target: 'http://img5.adesk.com',
+    changeOrigin: true,
+    pathRewrite: {
+        '^/pump': '/',
+    },
+}))
+
 app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))

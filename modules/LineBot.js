@@ -1,5 +1,6 @@
 const LineBot = require('@line/bot-sdk')
 const admin = require('firebase-admin')
+const axios = require('axios')
 const Bot = new LineBot.Client({
 	channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN,
 })
@@ -134,6 +135,30 @@ module.exports = {
 					throw error
 				})
 			})
+		})
+	},
+	GetImageFromURL_01(event) {
+		return axios.get('https://api88.net/api/img/rand?type=json', {
+			headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36' }
+		}).then(({data}) => {
+			const ImageURL = data.url
+			return {
+				type: 'image',
+				originalContentUrl: ImageURL,
+				previewImageUrl: ImageURL
+			}
+		}).catch((error) => {
+			throw error
+		})
+	},
+	GetImageFromURL_02(event) {
+		return axios.get('http://www.crys.top/api/beauty.php?n=9').then(({data}) => {
+			const ImageURL = data.replace('±', '').replace('±', '').replace('img=', '').replace('http://img5.adesk.com', process.env.BASE_URL + '/pump')
+			return {
+				type: 'image',
+				originalContentUrl: ImageURL,
+				previewImageUrl: ImageURL
+			}
 		})
 	}
 }

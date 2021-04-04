@@ -16,7 +16,7 @@ module.exports = {
 				case 'message':
 					if (event.message.type === 'text') {
 						event.message.text = FilterCharacter(event.message.text)
-
+						console.log(event.message.text)
 						const CombineCommand = await admin.database().ref(`replyMessage/${event.type}/combinedCommand`).once('value').then((snapshot) => {
 							return snapshot.val()
 						})
@@ -28,9 +28,8 @@ module.exports = {
 						let Command
 						if (FilterCombineCommand.length > 0) {
 							event.message.text = event.message.text.replace(FilterCombineCommand[0], '')
-							console.log(event.message.text)
-							console.log(FilterCombineCommand[0])
 							Command = LineModules[CombineCommand[FilterCombineCommand[0]]](event).then((message) => {
+								console.log(message)
 								return Bot.replyMessage(event.replyToken, message).then(() => true).catch((error) => {
 									throw error
 								}).catch((error) => {
