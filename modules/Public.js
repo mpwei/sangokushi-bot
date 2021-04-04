@@ -1,12 +1,13 @@
 module.exports = {
 	FilterCharacter (text) {
 		return text.replace('！', '!')
-			.replace('/', '')
-			.replace('.', '')
-			.replace('#', '')
-			.replace('$', '')
-			.replace('[', '')
-			.replace(']', '')
-			.replace('\n', '')
+			.replace(/\s/g, '')
+			.replace(/\//g, '')
+			.replace(/\./g, '')
+			.replace(/#/g, '')
+			.replace(/\$/g, '')
+			.replace(/\[/g, '')
+			.replace(/]/g, '')
+			.replace(/\\n/g, '')
 	}
 }
