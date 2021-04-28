@@ -160,5 +160,35 @@ module.exports = {
 				previewImageUrl: ImageURL
 			}
 		})
+	},
+	GetAllUsers(event) {
+		const Id = ['U5e867f6835338b9e410a7013532e587b'];
+		if (!event.source.userId.includes(Id)) {
+			return {
+				type: 'text',
+				text: '權限不足'
+			}
+		}
+		let Collection = 'LineUser'
+		switch (event.source.type) {
+			case 'group':
+				Collection += event.source.type + '-' + event.source.groupId
+				break
+			case 'room':
+				Collection += event.source.type + '-' + event.source.roomId
+				break
+		}
+		return admin.firestore().collection(Collection).get().then((qs) => {
+			let Text = '[群組內名單]\n\n名稱::遊戲名稱::分組名稱\n'
+			qs.forEach((doc) => {
+				Text += `${doc.data().displayName}::${doc.data().gameName}::${doc.data().groupName}\n`
+			})
+			return {
+				type: 'text',
+				text: Text
+			}
+		}).catch((error) => {
+			throw error
+		})
 	}
 }
