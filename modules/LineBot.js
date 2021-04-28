@@ -164,10 +164,10 @@ module.exports = {
 	GetAllUsers(event) {
 		const Id = ['U5e867f6835338b9e410a7013532e587b'];
 		if (!Id.includes(event.source.userId)) {
-			return {
+			return Promise.resolve({
 				type: 'text',
 				text: '權限不足'
-			}
+			})
 		}
 		let Collection = 'LineUser'
 		switch (event.source.type) {
