@@ -30,4 +30,3 @@ return axios.get('https://pic.netbian.com/4kmeinv/index.html').then(async({ data
 		console.log('https://pic.netbian.com' + DOM[RandomImageNumber].attribs.src)
 	})
 })
-

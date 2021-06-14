@@ -167,7 +167,12 @@ module.exports = {
 		})
 	},
 	GetImageFromURL_03(event) {
-		return axios.get('https://pic.netbian.com/4kmeinv/index.html').then(({ data }) => {
+		console.log('GetImageFromURL_03')
+		return axios.get('https://pic.netbian.com/4kmeinv/index.html',{
+			headers: {
+				'user-agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36'
+			}
+		}).then(({ data }) => {
 			const $ = cheerio.load(data)
 
 			//取得總頁數
@@ -175,6 +180,7 @@ module.exports = {
 
 			//隨機取得某一頁面的某一圖片
 			const RandomNumber = GetRandomNumber(2, TotalPage)
+			console.log(RandomNumber)
 			return axios.get(`https://pic.netbian.com/4kmeinv/index_${RandomNumber}.html`, {
 				headers: {
 					'user-agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36'
@@ -186,15 +192,44 @@ module.exports = {
 				const DOM =  $('.slist img')
 				const TotalImages = DOM.length
 				const RandomImageNumber = GetRandomNumber(0, TotalImages)
+				console.log(RandomImageNumber)
 				return {
 					type: 'image',
 					originalContentUrl: 'https://pic.netbian.com' + DOM[RandomImageNumber].attribs.src,
 					previewImageUrl: 'https://pic.netbian.com' + DOM[RandomImageNumber].attribs.src
 				}
 			}).catch((error) => {
+				console.log(error)
 				throw error
 			})
 		}).catch((error) => {
+			console.log(error)
+			throw error
+		})
+	},
+	GetImageFromURL_04(event) {
+		//隨機取得某一頁面的某一圖片
+		const RandomNumber = GetRandomNumber(2, 144)
+		console.log(RandomNumber)
+		return axios.get(`https://pic.netbian.com/4kmeinv/index_${RandomNumber}.html`, {
+			headers: {
+				'user-agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36'
+			}
+		}).then(({ data }) => {
+			const $ = cheerio.load(data)
+
+			//計算圖片個數
+			const DOM =  $('.slist img')
+			const TotalImages = DOM.length
+			const RandomImageNumber = GetRandomNumber(0, TotalImages)
+			console.log(RandomImageNumber)
+			return {
+				type: 'image',
+				originalContentUrl: 'https://pic.netbian.com' + DOM[RandomImageNumber].attribs.src,
+				previewImageUrl: 'https://pic.netbian.com' + DOM[RandomImageNumber].attribs.src
+			}
+		}).catch((error) => {
+			console.log(error)
 			throw error
 		})
 	},
