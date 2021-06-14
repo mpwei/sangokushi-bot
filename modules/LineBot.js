@@ -161,6 +161,20 @@ module.exports = {
 			}
 		})
 	},
+	GetImageFromURL_03(event) {
+		return Promise.resolve({
+			type: 'image',
+			originalContentUrl: 'https://api.nmb.show/xiaojiejie1.php',
+			previewImageUrl: 'https://api.nmb.show/xiaojiejie1.php'
+		})
+	},
+	GetImageFromURL_04(event) {
+		return Promise.resolve({
+			type: 'image',
+			originalContentUrl: 'https://api.nmb.show/xiaojiejie2.php',
+			previewImageUrl: 'https://api.nmb.show/xiaojiejie2.php'
+		})
+	},
 	GetAllUsers(event) {
 		const Id = ['U5e867f6835338b9e410a7013532e587b'];
 		if (!Id.includes(event.source.userId)) {
