@@ -143,17 +143,14 @@ module.exports = {
 		})
 	},
 	GetImageFromURL_01(event) {
-		return axios.get('https://api88.net/api/img/rand?type=json', {
-			headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36' }
-		}).then(({data}) => {
-			const ImageURL = data.url
+		//隨機取得某一頁面的某一圖片
+		const RandomNumber = GetRandomNumber(0, 2860)
+		return admin.database().ref(`/imageURL/${RandomNumber}`).once('value').then((snapShot) => {
 			return {
 				type: 'image',
-				originalContentUrl: ImageURL,
-				previewImageUrl: ImageURL
+				originalContentUrl: snapShot.val(),
+				previewImageUrl: snapShot.val()
 			}
-		}).catch((error) => {
-			throw error
 		})
 	},
 	GetImageFromURL_02(event) {
