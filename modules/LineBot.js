@@ -1,9 +1,14 @@
 const LineBot = require('@line/bot-sdk')
 const admin = require('firebase-admin')
+const cheerio = require('cheerio')
 const axios = require('axios')
 const Bot = new LineBot.Client({
 	channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN,
 })
+
+function GetRandomNumber(min, max) {
+	return Math.floor(Math.random() * (max - min + 1)) + min
+}
 
 module.exports = {
 	GetProfile(event) {
@@ -162,17 +167,35 @@ module.exports = {
 		})
 	},
 	GetImageFromURL_03(event) {
-		return Promise.resolve({
-			type: 'image',
-			originalContentUrl: 'https://api.nmb.show/xiaojiejie1.php',
-			previewImageUrl: 'https://api.nmb.show/xiaojiejie1.php'
-		})
-	},
-	GetImageFromURL_04(event) {
-		return Promise.resolve({
-			type: 'image',
-			originalContentUrl: 'https://api.nmb.show/xiaojiejie2.php',
-			previewImageUrl: 'https://api.nmb.show/xiaojiejie2.php'
+		return axios.get('https://pic.netbian.com/4kmeinv/index.html').then(({ data }) => {
+			const $ = cheerio.load(data)
+
+			//取得總頁數
+			const TotalPage = $('.page a')[6].childNodes[0].data
+
+			//隨機取得某一頁面的某一圖片
+			const RandomNumber = GetRandomNumber(2, TotalPage)
+			return axios.get(`https://pic.netbian.com/4kmeinv/index_${RandomNumber}.html`, {
+				headers: {
+					'user-agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36'
+				}
+			}).then(({ data }) => {
+				const $ = cheerio.load(data)
+
+				//計算圖片個數
+				const DOM =  $('.slist img')
+				const TotalImages = DOM.length
+				const RandomImageNumber = GetRandomNumber(0, TotalImages)
+				return {
+					type: 'image',
+					originalContentUrl: 'https://pic.netbian.com' + DOM[RandomImageNumber].attribs.src,
+					previewImageUrl: 'https://pic.netbian.com' + DOM[RandomImageNumber].attribs.src
+				}
+			}).catch((error) => {
+				throw error
+			})
+		}).catch((error) => {
+			throw error
 		})
 	},
 	GetAllUsers(event) {

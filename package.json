@@ -12,6 +12,7 @@
   "dependencies": {
     "@line/bot-sdk": "^7.2.0",
     "axios": "^0.20.0",
+    "cheerio": "^1.0.0-rc.10",
     "cookie-parser": "~1.4.4",
     "dayjs": "^1.8.34",
     "debug": "~2.6.9",
