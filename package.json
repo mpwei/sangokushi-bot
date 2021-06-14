@@ -28,6 +28,7 @@
     "@vue/compiler-sfc": "^3.0.5",
     "cross-env": "^7.0.2",
     "nodemon": "^2.0.4",
+    "selenium-webdriver": "^4.0.0-beta.4",
     "vite": "^2.1.5",
     "vue": "^3.0.5"
   }

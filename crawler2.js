@@ -1,4 +1,6 @@
 const admin = require('firebase-admin')
+const {Builder, By, Key, until} = require('selenium-webdriver')
+
 require('dotenv').config()
 
 if (!admin.apps.length) {
@@ -18,9 +20,18 @@ const Resource = [
 	'https://instagram.com/instagirlsasia?utm_medium=copy_link',
 	'https://instagram.com/beautyclub__18?utm_medium=copy_link',
 	'https://instagram.com/a.to.the.syu?utm_medium=copy_link',
-	'https://instagram.com/oxox.55278?utm_medium=copy_link',
+	'https://instagram.com/oxox.55278?utm_medium=copy_link'
 ]
-return admin.database().ref('/imageURL/1').once('value').then((snapShot) => {
-	console.log(snapShot.val())
-	process.exit()
-})
+
+async function example() {
+	let driver = await new Builder().forBrowser('chrome').build()
+	try {
+		await driver.get('https://instagram.com/5269.swag?utm_medium=copy_link')
+		await driver.findElement(By.name('q')).sendKeys('webdriver', Key.RETURN)
+		await driver.wait(until.titleIs('webdriver - Google Search'), 3000)
+	} finally {
+		await driver.quit()
+	}
+}
+
+example()
